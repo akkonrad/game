@@ -1,0 +1,41 @@
+<div class="row">
+
+    <div class="col-md-3 col-xs-6">
+        <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="fa fa-line-chart"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Current Income per sec.</span>
+                <span class="info-box-number">
+                    <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> {{statsCtrl.stats.income|currency}}</span>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+    </div>
+
+    <div class="col-md-3 col-xs-6">
+        <div class="info-box">
+            <span class="info-box-icon bg-blue"><i class="fa fa-money"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Total Amount</span>
+                <span class="info-box-number">{{statsCtrl.stats.total_amount | currency}}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+    </div>
+
+    <div class="col-md-3 col-xs-6">
+        <div class="info-box">
+            <span class="info-box-icon bg-maroon"><i class="fa fa-level-up"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Respect</span>
+                <span class="info-box-number">{{statsCtrl.stats.respect }}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+    </div>
+
+</div>

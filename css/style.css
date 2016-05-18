@@ -1,0 +1,15 @@
+.game-item.new {
+    border-color: darkseagreen;
+}
+
+.content-wrapper {
+    min-height: 900px;
+}
+
+.game-item {
+    cursor: pointer;
+}
+
+.game-item.inactive {
+    opacity: 0.7;
+}
