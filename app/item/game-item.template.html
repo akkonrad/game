@@ -1,6 +1,4 @@
-<div class="info-box bg-yellow" ng-class="{'bg-yellow-active': hover, 'inactive': item.can_afford == 0}"
-     ng-mouseenter="hover = true"
-     ng-mouseleave="hover = false"
+<div class="info-box bg-{{item.picked_color}}" ng-class="{'inactive': item.can_afford == 0}"
      ng-click="itemCtrl.upgrade(item)"
 >
     <span class="info-box-icon"><i ng-class="{'fa fa-money': item.active == 1, 'fa fa-refresh fa-spin': item.active == 0}"></i></span>
@@ -15,6 +13,7 @@
 
       <span class="progress-description">
         Current income: {{item.current_income|currency}}
+          <span ng-hide="item.timeleft == 0 && item.active == 1" class="pull-right">{{item.timeleft}}</span>
       </span>
 
     </div>

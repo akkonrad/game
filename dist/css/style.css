@@ -1,0 +1,15 @@
+.game-item {
+  cursor: pointer; }
+  .game-item.new {
+    border-color: darkseagreen; }
+  .game-item.inactive {
+    opacity: 0.4; }
+
+.content-wrapper {
+  min-height: 900px; }
+
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none; }

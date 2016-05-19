@@ -1,0 +1,11 @@
+.game-item {
+  cursor: pointer;
+
+  &.new {
+    border-color: darkseagreen;
+  }
+
+  &.inactive {
+    opacity: 0.4;
+  }
+}
