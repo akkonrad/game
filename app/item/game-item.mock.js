@@ -1,4 +1,5 @@
 function getItemsMockArray() {
+
     return [
         {
             name: "Name 1", // item name, displayed on
@@ -110,5 +111,5 @@ function getItemsMockArray() {
                 }
             ]
         }
-    ]
+    ];
 }
