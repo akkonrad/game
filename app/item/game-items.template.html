@@ -2,7 +2,7 @@
     <div class="col-xs-8">
         <game-item
                 class="game-item"
-                ng-repeat="itemObject in itemsCtrl.items | filter:{visible: {on: 1}} track by $index"
+                ng-repeat="itemObject in itemsCtrl.items | filter:{visible: {on: 1}}"
                 item="itemObject">
         </game-item>
     </div>

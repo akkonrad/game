@@ -54,7 +54,7 @@ function getItemsMockArray() {
             name: "Name 1", // item name, displayed on
             level: 1,
             color: ['red', 'yellow', 'aqua', 'blue', 'light-blue', 'green', 'navy', 'teal', 'olive', 'lime', 'orange', 'fuchsia', 'purple', 'maroon', 'black'],
-            picked_color: 'aqua',
+            picked_color: 'red',
             description: "lorem ipsum dolor sit amet",
             upgrade_cost: 4,
             current_income: 1,
@@ -395,6 +395,7 @@ function StatsFactory($timeout, $interval) {
                 total_amount: '='
             },
             replace: true,
+            transclude: true,
             controller: ['Item', 'Stats', gameItemController],
             controllerAs: 'itemCtrl'
         }
@@ -403,6 +404,7 @@ function StatsFactory($timeout, $interval) {
     function gameItemController(Item, Stats) {
         var controller = this;
         controller.upgrade = function (item) {
+            console.log(item.picked_color);
             if (item.upgrade_cost <= Stats.getTotalAmount() && item.active == 1) {
                 Item.upgrade(item);
                 Stats.spendMoney(item.upgrade_cost);

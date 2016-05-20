@@ -1,5 +1,4 @@
-<div class="info-box bg-{{item.picked_color}}" ng-class="{'inactive': item.can_afford == 0}"
-     ng-click="itemCtrl.upgrade(item)"
+<div ng-class="{'info-box bg-{{item.picked_color}}': 1, 'inactive': item.can_afford == 0}" ng-click="itemCtrl.upgrade(item)"
 >
     <span class="info-box-icon"><i
             ng-class="{'fa fa-money': item.active == 1, 'fa fa-refresh fa-spin': item.active == 0}"></i></span>
