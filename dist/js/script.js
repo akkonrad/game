@@ -1,6 +1,52 @@
 angular.module('game', []);
 
 
+function getActionsMockArray() {
+    return [
+        {
+            title: 'Action 1',
+            color: 'orange',
+            description: 'lorem ipsum dolor sit amet.',
+            requirements: {
+                respect: 10,
+                money: 10
+            },
+            cost: {
+                money: 5
+            },
+            reward: {
+                money: 100,
+                respect: 10
+            },
+            visible: {
+                on: 1,
+                visible_at: 0
+            }
+        },
+        {
+            title: 'Action 2',
+            color: 'blue',
+            description: 'lorem ipsum dolor sit amet.',
+            duration: 5,
+            requirements: {
+                respect: 20,
+                money: 20
+            },
+            cost: {
+                money: 5
+            },
+            reward: {
+                money: 100,
+                respect: 10
+            },
+            visible: {
+                on: 0,
+                visible_at: 5
+            }
+        }
+    ];
+}
+
 function getItemsMockArray() {
 
     return [
@@ -118,6 +164,71 @@ function getItemsMockArray() {
 }
 (function () {
     'use strict';
+
+    angular.module('game')
+        .factory('Action', ['$timeout', '$interval', ActionFactory]);
+
+    function ActionFactory($timeout, $interval) {
+        var actions = getActionsMockArray();
+
+        return {
+            all: function () {
+                return actions;
+            },
+            upgrade: function (action) {
+                console.log(action);
+                return;
+
+                // If action is active to upgrade
+                action.active = 0;
+                // Show progress
+                action.current_progress = 0;
+
+                $timeout(function () {
+                    // Set action to active again.
+                    action.active = 1;
+                    // Upgrade cos formula, exponential
+                    action.upgrade_cost = Math.round((action.upgrade_cost * 2 - action.upgrade_cost * 0.8) * 100) / 100;
+                    // Linear upgrade
+                    action.current_income = action.current_income + action.base_income;
+                    // Current action level
+                    action.level += 1;
+                    action.current_progress = 0;
+                }, action.timeout * 1000);
+
+                action.timeleft = action.timeout - 1;
+                var time_left = action.timeout - 1;
+
+                $interval(function () {
+                    action.current_progress += (100 / time_left);
+                    action.timeleft--;
+                }, 1000, action.timeout - 1);
+
+                // callback game: do something
+            },
+            updateVisibility: function (amount) {
+                for (var i = 0; i < actions.length; i++) {
+                    // Whenever total amount reaches action visibility level, keep it visible for user.
+                    if (actions[i].visible.on == 0 && actions[i].visible.visible_at <= amount) {
+                        actions[i].visible.on = 1;
+                    }
+                    if (actions[i].upgrade_cost > amount) {
+                        actions[i].can_afford = 0;
+                    }
+                    else {
+                        actions[i].can_afford = 1;
+                    }
+
+                }
+            },
+            bonus: function (action) {
+                // callback game: do something
+            }
+        };
+    }
+})();
+(function () {
+    'use strict';
     
     angular.module('game')
         .factory('Item', ['$timeout', '$interval', ItemFactory]);
@@ -210,6 +321,65 @@ function StatsFactory($timeout, $interval) {
         }
     }
 };
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameAction', gameActionDirective);
+
+    function gameActionDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-action.template.html',
+            scope: {
+                action: '=',
+                total_amount: '='
+            },
+            replace: true,
+            controller: ['Action', 'Stats', gameActionController],
+            controllerAs: 'actionCtrl'
+        }
+    }
+
+    function gameActionController(Action, Stats) {
+        var controller = this;
+        controller.upgrade = function (action) {
+            if (action.upgrade_cost <= Stats.getTotalAmount() && action.active == 1) {
+                Action.upgrade(action);
+                Stats.spendMoney(action.upgrade_cost);
+            }
+        }
+    }
+})();
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameActions', ['Action', gameActionsDirective]);
+
+
+    function gameActionsDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-actions.template.html',
+            scope: {
+                actions: '='
+            },
+            controller: ['Action', gameActionsController],
+            controllerAs: 'actionsCtrl'
+        }
+    }
+
+    function gameActionsController(Action) {
+        var controller = this;
+        controller.actions = Action.all().reverse();
+        controller.greaterThan = function (prop, val) {
+            return prop >= val;
+        }
+    }
+    
+})();
+
 (function () {
     'use strict';
     
