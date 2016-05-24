@@ -9,8 +9,7 @@ var js_scripts = [
 
     // base
     'app/app.js',
-
-    // item module
+    // modules
     'app/*/*.mock.js',
     'app/*/*.service.js',
     'app/*/*.directive.js'
@@ -33,7 +32,7 @@ gulp.task('scripts', function() {
 
 gulp.task('minify-css', function() {
     return gulp.src('dist/css/*.css')
-        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(cleanCSS({compatibily: 'ie8'}))
         .pipe(gulp.dest('dist/css'));
 });
 

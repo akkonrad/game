@@ -1,0 +1,19 @@
+<div class="requires">
+    <h5>Requirements</h5>
+    <ul class="list-unstyled">
+        <li>
+            <span class="label bg-blue">
+                Money: {{action.requirements.money | currency}}
+                <i ng-hide="action.can_afford_money" class="fa fa-exclamation-circle"></i>
+            </span>
+        </li>
+        <li>
+            <span class="label bg-maroon">
+                Respect: {{action.requirements.respect}}
+                <i ng-hide="action.can_afford_respect" class="fa fa-exclamation-circle"></i>
+            </span>
+
+        </li>
+    </ul>
+
+</div>

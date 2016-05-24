@@ -7,7 +7,7 @@
     function gameItemsDirective() {
         return {
             restrict: 'E',
-            templateUrl: './app/item/game-items.template.html',
+            templateUrl: './app/items/game-items.template.html',
             scope: {
                 item: '='
             },

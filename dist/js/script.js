@@ -7,16 +7,18 @@ function getActionsMockArray() {
             title: 'Action 1',
             color: 'orange',
             description: 'lorem ipsum dolor sit amet.',
+            duration: 5,
+            active: 1,
             requirements: {
-                respect: 10,
-                money: 10
+                respect: 0,
+                money: 5
             },
             cost: {
                 money: 5
             },
             reward: {
                 money: 100,
-                respect: 10
+                respect: 1
             },
             visible: {
                 on: 1,
@@ -26,14 +28,15 @@ function getActionsMockArray() {
         {
             title: 'Action 2',
             color: 'blue',
-            description: 'lorem ipsum dolor sit amet.',
+            description: 'another description ipsum lorem.',
             duration: 5,
+            active: 1,
             requirements: {
-                respect: 20,
+                respect: 1,
                 money: 20
             },
             cost: {
-                money: 5
+                money: 20
             },
             reward: {
                 money: 100,
@@ -166,63 +169,66 @@ function getItemsMockArray() {
     'use strict';
 
     angular.module('game')
-        .factory('Action', ['$timeout', '$interval', ActionFactory]);
+        .factory('Action', ['$timeout', '$interval', 'Stats', ActionFactory]);
 
-    function ActionFactory($timeout, $interval) {
+    function ActionFactory($timeout, $interval, Stats) {
         var actions = getActionsMockArray();
+        var stats = Stats.getStats();
 
         return {
             all: function () {
                 return actions;
             },
-            upgrade: function (action) {
-                console.log(action);
-                return;
-
-                // If action is active to upgrade
-                action.active = 0;
-                // Show progress
-                action.current_progress = 0;
-
-                $timeout(function () {
-                    // Set action to active again.
-                    action.active = 1;
-                    // Upgrade cos formula, exponential
-                    action.upgrade_cost = Math.round((action.upgrade_cost * 2 - action.upgrade_cost * 0.8) * 100) / 100;
-                    // Linear upgrade
-                    action.current_income = action.current_income + action.base_income;
-                    // Current action level
-                    action.level += 1;
-                    action.current_progress = 0;
-                }, action.timeout * 1000);
-
-                action.timeleft = action.timeout - 1;
-                var time_left = action.timeout - 1;
-
-                $interval(function () {
-                    action.current_progress += (100 / time_left);
-                    action.timeleft--;
-                }, 1000, action.timeout - 1);
-
-                // callback game: do something
-            },
-            updateVisibility: function (amount) {
+            updateVisibility: function (amount, respect) {
                 for (var i = 0; i < actions.length; i++) {
                     // Whenever total amount reaches action visibility level, keep it visible for user.
                     if (actions[i].visible.on == 0 && actions[i].visible.visible_at <= amount) {
                         actions[i].visible.on = 1;
                     }
-                    if (actions[i].upgrade_cost > amount) {
-                        actions[i].can_afford = 0;
+                    if (actions[i].requirements.respect <= respect) {
+                        actions[i].can_afford_respect = 1;
                     }
                     else {
-                        actions[i].can_afford = 1;
+                        actions[i].can_afford_respect = 0;
+                    }
+
+                    if (actions[i].requirements.money <= amount) {
+                        actions[i].can_afford_money = 1;
+                    }
+                    else {
+                        actions[i].can_afford_money = 0;
                     }
 
                 }
             },
-            bonus: function (action) {
-                // callback game: do something
+            valiadatePerform: function (action) {
+                if (action.requirements.money <= stats.total_amount && action.requirements.respect <= stats.respect &&
+                    action.cost.money <= stats.total_amount &&
+                    action.active === 1) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            },
+            performAction: function (action) {
+                Stats.spendMoney(action.cost.money);
+                action.active = 0;
+                action.current_progress = 0;
+
+                $timeout(function () {
+                    action.active = 1;
+                    action.current_progress = 0;
+                    Stats.getActionReward(action);
+                }, action.duration * 1000);
+
+                action.timeleft = action.duration - 1;
+                var time_left = action.duration - 1;
+
+                $interval(function () {
+                    action.current_progress += (100 / time_left);
+                    action.timeleft--;
+                }, 1000, action.duration - 1);
             }
         };
     }
@@ -306,7 +312,8 @@ angular.module('game')
 function StatsFactory($timeout, $interval) {
     var stats = {
         income: 0,
-        total_amount: 0
+        total_amount: 0,
+        respect: 0
     };
 
     return {
@@ -318,9 +325,109 @@ function StatsFactory($timeout, $interval) {
         },
         spendMoney: function(amount) {
             stats.total_amount = stats.total_amount - amount;
+        },
+        getActionReward: function(action) {
+            stats.total_amount = stats.total_amount + action.reward.money;
+            stats.respect = stats.respect + action.reward.respect;
         }
     }
 };
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameActionDescription', gameActionDescriptionDirective);
+
+    function gameActionDescriptionDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-action-description.template.html',
+            scope: {
+                action: '='
+            },
+            controller: ['Action', gameActionDescriptionController],
+            controllerAs: 'actionCtrl'
+        }
+    }
+
+    function gameActionDescriptionController(Action) {
+        // var controller = Action;
+        // console.log(controller);
+    }
+
+})();
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameActionIcon', gameActionIconDirective);
+
+    function gameActionIconDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-action-icon.template.html',
+            scope: {
+                action: '='
+            },
+            controller: ['Action', gameActionIconController],
+            controllerAs: 'actionCtrl'
+        }
+    }
+
+    function gameActionIconController(Action) {
+        // var controller = Action;
+        // console.log(controller);
+    }
+
+})();
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameActionRequires', gameActionRequiresDirective);
+
+    function gameActionRequiresDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-action-requires.template.html',
+            scope: {
+                action: '='
+            },
+            controller: ['Action', gameActionRequiresController],
+            controllerAs: 'actionCtrl'
+        }
+    }
+
+    function gameActionRequiresController(Action) {
+        var controller = this;
+    }
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('game')
+        .directive('gameActionTitle', gameActionTitleDirective);
+
+    function gameActionTitleDirective() {
+        return {
+            restrict: 'E',
+            templateUrl: './app/actions/game-action-title.template.html',
+            scope: {
+                action: '='
+            },
+            controller: ['Action', gameActionTitleController],
+            controllerAs: 'actionCtrl'
+        }
+    }
+
+    function gameActionTitleController(Action) {
+        // var controller = Action;
+        // console.log(controller);
+    }
+
+})();
 (function () {
     'use strict';
 
@@ -343,10 +450,11 @@ function StatsFactory($timeout, $interval) {
 
     function gameActionController(Action, Stats) {
         var controller = this;
-        controller.upgrade = function (action) {
-            if (action.upgrade_cost <= Stats.getTotalAmount() && action.active == 1) {
-                Action.upgrade(action);
-                Stats.spendMoney(action.upgrade_cost);
+
+        controller.performAction = function(action) {
+
+            if (Action.valiadatePerform(action)) {
+                Action.performAction(action);
             }
         }
     }
@@ -377,7 +485,6 @@ function StatsFactory($timeout, $interval) {
             return prop >= val;
         }
     }
-    
 })();
 
 (function () {
@@ -389,7 +496,7 @@ function StatsFactory($timeout, $interval) {
     function gameItemDirective() {
         return {
             restrict: 'E',
-            templateUrl: './app/item/game-item.template.html',
+            templateUrl: './app/items/game-item.template.html',
             scope: {
                 item: '=',
                 total_amount: '='
@@ -404,7 +511,6 @@ function StatsFactory($timeout, $interval) {
     function gameItemController(Item, Stats) {
         var controller = this;
         controller.upgrade = function (item) {
-            console.log(item.picked_color);
             if (item.upgrade_cost <= Stats.getTotalAmount() && item.active == 1) {
                 Item.upgrade(item);
                 Stats.spendMoney(item.upgrade_cost);
@@ -421,7 +527,7 @@ function StatsFactory($timeout, $interval) {
     function gameItemsDirective() {
         return {
             restrict: 'E',
-            templateUrl: './app/item/game-items.template.html',
+            templateUrl: './app/items/game-items.template.html',
             scope: {
                 item: '='
             },
@@ -438,6 +544,7 @@ function StatsFactory($timeout, $interval) {
         }
     }
 })();
+
 angular.module('game')
     .directive('gameStats', ['$interval', 'Item', 'Stats', StatsDirective]);
 
@@ -448,12 +555,12 @@ function StatsDirective() {
         scope: {
             income: '='
         },
-        controller: ['$interval', 'Item', 'Stats', StatsController],
+        controller: ['$interval', 'Item', 'Stats', 'Action', StatsController],
         controllerAs: 'statsCtrl'
     }
 }
 
-function StatsController($interval, Item, Stats) {
+function StatsController($interval, Item, Stats, Action) {
     var statsCtrl = this;
     var stats = Stats.getStats();
     statsCtrl.stats = stats;
@@ -463,5 +570,6 @@ function StatsController($interval, Item, Stats) {
         stats.total_amount = stats.total_amount + stats.income;
         statsCtrl.stats = stats;
         Item.updateVisibility(stats.total_amount);
+        Action.updateVisibility(stats.total_amount, stats.respect);
     }, 1000);
 }
