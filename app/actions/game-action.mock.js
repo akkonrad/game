@@ -18,8 +18,8 @@ function getActionsMockArray() {
                 respect: 1
             },
             visible: {
-                on: 1,
-                visible_at: 0
+                on: 0,
+                visible_at: 100
             }
         },
         {
@@ -41,7 +41,7 @@ function getActionsMockArray() {
             },
             visible: {
                 on: 0,
-                visible_at: 5
+                visible_at: 200
             }
         }
     ];

@@ -1,10 +1,5 @@
-<div class="row">
-    <div class="col-md-8 col-md-offset-4">
-        <game-action
-                class="game-action"
-                ng-repeat="actionObject in actionsCtrl.actions | filter:{visible: {on: 1}}"
-                action="actionObject">
-        </game-action>
-
-    </div>
-</div>
+<game-action
+        class="game-action"
+        ng-repeat="actionObject in actionsCtrl.actions | filter:{visible: {on: 1}}"
+        action="actionObject">
+</game-action>
