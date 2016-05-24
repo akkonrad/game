@@ -4,7 +4,8 @@ angular.module('game')
 function StatsFactory($timeout, $interval) {
     var stats = {
         income: 0,
-        total_amount: 0
+        total_amount: 0,
+        respect: 0
     };
 
     return {
@@ -16,6 +17,10 @@ function StatsFactory($timeout, $interval) {
         },
         spendMoney: function(amount) {
             stats.total_amount = stats.total_amount - amount;
+        },
+        getActionReward: function(action) {
+            stats.total_amount = stats.total_amount + action.reward.money;
+            stats.respect = stats.respect + action.reward.respect;
         }
     }
 };

@@ -7,12 +7,13 @@
     function gameItemDirective() {
         return {
             restrict: 'E',
-            templateUrl: './app/item/game-item.template.html',
+            templateUrl: './app/items/game-item.template.html',
             scope: {
                 item: '=',
                 total_amount: '='
             },
             replace: true,
+            transclude: true,
             controller: ['Item', 'Stats', gameItemController],
             controllerAs: 'itemCtrl'
         }

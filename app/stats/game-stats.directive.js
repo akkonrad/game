@@ -8,12 +8,12 @@ function StatsDirective() {
         scope: {
             income: '='
         },
-        controller: ['$interval', 'Item', 'Stats', StatsController],
+        controller: ['$interval', 'Item', 'Stats', 'Action', StatsController],
         controllerAs: 'statsCtrl'
     }
 }
 
-function StatsController($interval, Item, Stats) {
+function StatsController($interval, Item, Stats, Action) {
     var statsCtrl = this;
     var stats = Stats.getStats();
     statsCtrl.stats = stats;
@@ -23,5 +23,6 @@ function StatsController($interval, Item, Stats) {
         stats.total_amount = stats.total_amount + stats.income;
         statsCtrl.stats = stats;
         Item.updateVisibility(stats.total_amount);
+        Action.updateVisibility(stats.total_amount, stats.respect);
     }, 1000);
 }

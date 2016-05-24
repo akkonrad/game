@@ -1,0 +1,10 @@
+<div ng-class="{'small-box bg-{{action.color}} info-box': true, 'inactive': !(action.can_afford_money && action.can_afford_respect)}"
+     ng-click="actionCtrl.performAction(action)">
+    <div class="inner">
+        <game-action-title action="action"></game-action-title>
+        <game-action-description action="action"></game-action-description>
+        <game-action-requires action="action"></game-action-requires>
+    </div>
+
+    <game-action-icon action="action"></game-action-icon>
+</div>

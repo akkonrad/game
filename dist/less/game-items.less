@@ -1,0 +1,19 @@
+.game-item {
+  cursor: pointer;
+
+  &.new {
+    border-color: darkseagreen;
+  }
+
+  &.inactive {
+    opacity: 0.4;
+  }
+
+  // Hover on bg-[colorname] items.
+  .-(@i: length(@colors)) when (@i > 0) {
+  @name: extract(@colors, @i);
+  &.bg-@{name}:hover {background-color: darken(@@name, 5%) !important}
+  .-((@i - 1));
+  } .-;
+
+}

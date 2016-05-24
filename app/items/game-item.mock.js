@@ -5,7 +5,7 @@ function getItemsMockArray() {
             name: "Name 1", // item name, displayed on
             level: 1,
             color: ['red', 'yellow', 'aqua', 'blue', 'light-blue', 'green', 'navy', 'teal', 'olive', 'lime', 'orange', 'fuchsia', 'purple', 'maroon', 'black'],
-            picked_color: 'aqua',
+            picked_color: 'red',
             description: "lorem ipsum dolor sit amet",
             upgrade_cost: 4,
             current_income: 1,
